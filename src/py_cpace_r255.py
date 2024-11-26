@@ -1,4 +1,4 @@
-from pysodium import crypto_hash_sha512, crypto_core_ristretto255_from_hash
+from pysodium import crypto_hash_sha512, crypto_core_ristretto255_from_hash, crypto_core_ristretto255_scalar_random
 
 DSI = b'CPaceRistretto255'
 s_in_bytes = 128
