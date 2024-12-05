@@ -73,33 +73,56 @@ def scalar_mult_vfy(s: bytes, e: bytes) -> bytes:
         raise ValueError('No valid group element')
 
 class CPace(object):
-    def __init__(self, PRF: bytes, mo: Literal['oc', 'ir'], ADa = b'', ADb = b'', CI = b'', sid = b''):
+    def __init__(self, PRF: bytes, role: Literal['initiator', 'responder', 'symmetric'], ADa = b'', ADb = b'', CI = b'', sid = b'', yx = b''):
         self._prf = PRF
         self.ADa = ADa
         self.ADb = ADb
         self.CI = CI
         self.sid = sid
-        self._g = b''
-        if mo == 'oc':
-            self.transcript = transcript_oc
-        elif mo == 'ir':
+        self._yx = yx
+        self.Ya = b''
+        self.Yb = b''
+        self.role = role
+        if self.role == 'initiator':
             self.transcript = transcript_ir
+        elif self.role == 'responder':
+            self.transcript = transcript_ir
+        elif self.role == 'symmetric':
+            self.transcript = transcript_oc
         else:
             raise ValueError('Invalid Input')
 
-    def compute_Ya(self):
-        self._g = calculate_generator(self._prf, self.CI, self.sid)
-        ya = crypto_core_ristretto255_scalar_random()
-        ya = bytes.fromhex('da3d23700a9e5699258aef94dc060dfda5ebb61f02a5ea77fad53f4ff0976d08')
-        Ya = crypto_scalarmult_ristretto255(ya, self._g)
+    def compute_Yx(self) -> tuple[bytes, bytes]:
+        g = calculate_generator(self._prf, self.CI, self.sid)
+        if self._yx == b'':
+            self._yx = crypto_core_ristretto255_scalar_random()
+        Yx = crypto_scalarmult_ristretto255(self._yx, g)
 
-        return Ya, self.ADa
+        if self.role == 'initiator':
+            self.Ya = Yx
+            return self.Ya, self.ADa
+        elif self.role == 'responder':
+            self.Yb = Yx
+            return self.Yb, self.ADb
+        elif self.role == 'symmetric':
+            self.Ya = Yx
+            return self.Ya, self.ADa
 
-    def compute_Yb(self, Ya: bytes):
-        self._g = calculate_generator(self._prf, self.CI, self.sid)
-        yb = crypto_core_ristretto255_scalar_random()
-        Yb = crypto_scalarmult_ristretto255(yb, self._g)
 
-        K = scalar_mult_vfy(yb, Ya)
+    def derive_ISK(self, Yx) -> bytes:
+        K = scalar_mult_vfy(self._yx, Yx)
+        if self.role == 'initiator':
+            self.Yb = Yx
+        elif self.role == 'responder':
+            self.Ya = Yx
+        elif self.role == 'symmetric':
+            self.Yb = Yx
 
-        ISK = crypto_hash_sha512(lv_cat(DSI + b"_ISK", self.sid, K) + self.transcript(Ya, self.ADa, Yb, self.ADb))
+        del self._yx
+
+        ISK = crypto_hash_sha512(lv_cat(DSI + b"_ISK", self.sid, K) + self.transcript(self.Ya, self.ADa, self.Yb, self.ADb))
+        del K
+
+        return ISK
+
+
