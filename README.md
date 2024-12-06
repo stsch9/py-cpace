@@ -12,7 +12,7 @@ cpaceA = CPace(PRF=b'Password', role='symmetric', ADa=b'Alice', ADb=b'Bob', CI=b
 Ya, ADa = cpaceA.compute_Yx()
 
 # User Bob:
-cpaceB = CPace(PRS=b'Password', role='symmetric', ADa=b'Bob', ADb=b'Alice', CI=b'CI', sid=b'sid')
+cpaceB = CPace(PRF=b'Password', role='symmetric', ADa=b'Bob', ADb=b'Alice', CI=b'CI', sid=b'sid')
 Yb, ADb = cpaceB.compute_Yx()
 
 # User Alice:
@@ -25,11 +25,11 @@ ISK_B = cpaceB.derive_ISK(Ya)
 ### initiator-responder setting
 ```
 # User Alice:
-cpaceA = CPace(PRS=b'Password', role='initiator', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
+cpaceA = CPace(PRF=b'Password', role='initiator', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
 Ya, ADa = cpaceA.compute_Yx()
 
 # User Bob:
-cpaceB = CPace(PRS=b'Password', role='responder', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
+cpaceB = CPace(PRF=b'Password', role='responder', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
 Yb, ADb = cpaceB.compute_Yx()
 
 # User Alice:
