@@ -7,34 +7,34 @@ It uses [pysodium](https://github.com/stef/pysodium) for all Ristretto255 functi
 ## Usage:
 ### symmetric setting
 ```
-# User A:
-cpaceA = CPace(PRS, role='symmetric', ADa=ADa, ADb=ADb, CI=CI, sid=sid)
+# User Alice:
+cpaceA = CPace(PRF=b'Password', role='symmetric', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
 Ya, ADa = cpaceA.compute_Yx()
 
-# User B:
-cpaceB = CPace(PRS, role='symmetric', ADa=ADa, ADb=ADb, CI=CI, sid=sid)
+# User Bob:
+cpaceB = CPace(PRS=b'Password', role='symmetric', ADa=b'Bob', ADb=b'Alice', CI=b'CI', sid=b'sid')
 Yb, ADb = cpaceB.compute_Yx()
 
-# User A:
+# User Alice:
 ISK_A = cpaceA.derive_ISK(Yb)
 
-# User B:
+# User Bob:
 ISK_B = cpaceB.derive_ISK(Ya)
 ```
 
 ### initiator-responder setting
 ```
-# User A:
-cpaceA = CPace(PRS, role='initiator', ADa=ADa, ADb=ADb, CI=CI, sid=sid)
+# User Alice:
+cpaceA = CPace(PRS=b'Password', role='initiator', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
 Ya, ADa = cpaceA.compute_Yx()
 
-# User B:
-cpaceB = CPace(PRS, role='responder', ADa=ADa, ADb=ADb, CI=CI, sid=sid)
+# User Bob:
+cpaceB = CPace(PRS=b'Password', role='responder', ADa=b'Alice', ADb=b'Bob', CI=b'CI', sid=b'sid')
 Yb, ADb = cpaceB.compute_Yx()
 
-# User A:
+# User Alice:
 ISK_A = cpaceA.derive_ISK(Yb)
 
-# User B:
+# User Bob:
 ISK_B = cpaceB.derive_ISK(Ya)
 ```
