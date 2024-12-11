@@ -2,7 +2,7 @@
 **WARNING:** This is just a PoC. Use at your own risk. <br />
 This is a simple python implementation of CPace defined in [draft-irtf-cfrg-cpace-13](https://www.ietf.org/archive/id/draft-irtf-cfrg-cpace-13.html).
 
-It uses [pysodium](https://github.com/stef/pysodium) for all Ristretto255 functions. Therefore libsodium must be pre-installed [libsodium](https://doc.libsodium.org/).
+It uses [pysodium](https://github.com/stef/pysodium) for all Ristretto255 functions. Therefore [libsodium](https://doc.libsodium.org/) must be pre-installed.
 
 ## Usage:
 ### symmetric setting
